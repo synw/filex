@@ -115,7 +115,7 @@ class _FilexBloc {
 
   Future<void> lsDir(Directory dir) async {
     try {
-      ListedDirectory _d = await getListedDirectory(dir, false);
+      ListedDirectory _d = getListedDirectory(dir, false);
       itemController.sink.add(_d.items);
     } catch (e) {
       print("Can not ls dir: $e.message");
