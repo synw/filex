@@ -3,38 +3,8 @@ import 'dart:async';
 import 'package:path/path.dart';
 import "models/filesystem.dart";
 
-Future<void> deleteItem(DirectoryItem item) async {
-  try {
-    await _rm(item);
-  } catch (e) {
-    throw ("Can not delete directory: $e.message");
-  }
-}
-
-Future<void> createDir(String name, String path) async {
-  try {
-    // trim the filename for leading and trailing spaces
-    name = name.trim();
-    // create the directory
-    await _mkdir(Directory(path), name);
-  } catch (e) {
-    throw ("Can not create directory: $e.message");
-  }
-}
-
-Future<ListedDirectory> lsDir(Directory dir,
-    {bool showHiddenFiles = false}) async {
-  assert(dir != null);
-  ListedDirectory lDir;
-  try {
-    lDir = _getListedDirectory(dir, showHiddenFiles);
-  } catch (e) {
-    throw ("Can not ls dir: $e");
-  }
-  return lDir;
-}
-
-Future<void> _rm(DirectoryItem item) async {
+/// Delete an item
+Future<void> rm(DirectoryItem item) async {
   try {
     item.item.deleteSync(recursive: true);
   } catch (e) {
@@ -42,18 +12,23 @@ Future<void> _rm(DirectoryItem item) async {
   }
 }
 
-Future<void> _mkdir(Directory currentDir, String name) async {
+/// Create a directory
+Future<void> mkdir(Directory currentDir, String name) async {
   try {
-    Directory dir = Directory(currentDir.path + "/$name");
-    dir.createSync(recursive: true);
+    String path = currentDir.path + "/$name";
+    Directory dir = Directory(path);
+    print("Creating dir ${dir.path}");
+    dir.createSync();
   } catch (e) {
     throw ("Can not create directory: $e");
   }
 }
 
-ListedDirectory _getListedDirectory(Directory dir, bool showHiddenFiles) {
+/// List items in directory
+ListedDirectory getListedDirectory(Directory dir, bool showHiddenFiles) {
   //print("LIST DIR ${dir.path}");
-  List contents = dir.listSync()..sort((a, b) => a.path.compareTo(b.path));
+  List<FileSystemEntity> contents = dir.listSync()
+    ..sort((a, b) => a.path.compareTo(b.path));
   var dirs = <Directory>[];
   var files = <File>[];
   for (FileSystemEntity fileOrDir in contents) {

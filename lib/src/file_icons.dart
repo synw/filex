@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Set the icon for a file
 Icon setFileIcon(String filename) {
   String extension = filename.split(".").last;
   if (extension == "db" || extension == "sqlite" || extension == "sqlite3") {
