@@ -1,5 +1,7 @@
 # Filex
 
+[![pub package](https://img.shields.io/pub/v/filex.svg)](https://pub.dartlang.org/packages/filex)
+
 Configurable file explorer widget for Flutter
 
 ![Screenshot](img/screen.png)
