@@ -74,3 +74,26 @@ Available controller actions:
 `controller.ls()` : list the current directory
 
 `controller.dispose()` : dispose the bloc when finished using
+
+## Custom actions
+
+It is possible to add custom actions in the slidable menu:
+
+```dart
+Filex(
+    controller: controller,
+    actions: <PredefinedAction>[PredefinedAction.delete],
+    extraActions: <FilexSlidableAction>[
+    FilexSlidableAction(
+        name: "My action",
+        iconData: Icons.file_upload,
+        color: Colors.blue,
+        onTap: customAction,
+    )
+    ],
+)
+
+void customAction(BuildContext context, DirectoryItem item) {
+    // action here
+}
+```
