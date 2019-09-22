@@ -25,7 +25,8 @@ Future<void> mkdir(Directory currentDir, String name) async {
 }
 
 /// List items in directory
-ListedDirectory getListedDirectory(Directory dir, bool showHiddenFiles) {
+ListedDirectory getListedDirectory(Directory dir,
+    {bool showHiddenFiles, bool showOnlyDirectories}) {
   //print("LIST DIR ${dir.path}");
   List<FileSystemEntity> contents = dir.listSync()
     ..sort((a, b) => a.path.compareTo(b.path));
@@ -41,8 +42,10 @@ ListedDirectory getListedDirectory(Directory dir, bool showHiddenFiles) {
         dirs.add(dir);
         break;
       default:
-        var file = File(fileOrDir.path);
-        files.add(file);
+        if (!showOnlyDirectories) {
+          var file = File(fileOrDir.path);
+          files.add(file);
+        }
     }
   }
   return ListedDirectory(

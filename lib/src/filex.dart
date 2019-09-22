@@ -5,23 +5,29 @@ import 'package:pedantic/pedantic.dart';
 import 'package:open_file/open_file.dart';
 import "models/filesystem.dart";
 import 'bloc.dart';
-import 'conf.dart';
 import 'models/actions.dart';
 
 class _FilexState extends State<Filex> {
   _FilexState(
       {@required this.controller,
       this.showHiddenFiles,
+      this.showOnlyDirectories,
       this.fileTrailingBuilder,
       this.directoryTrailingBuilder,
+      this.fileLeadingBuilder,
       this.directoryLeadingBuilder,
       this.compact,
       this.actions,
       this.extraActions}) {
+    _initialDirectory = controller.directory;
+    controller.showOnlyDirectories = showOnlyDirectories;
+    controller.showHiddenFiles = showHiddenFiles;
     controller.ls();
   }
 
   final bool showHiddenFiles;
+  final bool showOnlyDirectories;
+  final FilexActionBuilder fileLeadingBuilder;
   final FilexActionBuilder fileTrailingBuilder;
   final FilexActionBuilder directoryTrailingBuilder;
   final FilexActionBuilder directoryLeadingBuilder;
@@ -33,6 +39,7 @@ class _FilexState extends State<Filex> {
   SlidableController _slidableController;
   final ScrollController _scrollController = ScrollController();
   bool _isBuilt = false;
+  Directory _initialDirectory;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +79,7 @@ class _FilexState extends State<Filex> {
                 }
                 return w;
               });
-          if (controller.directory.path != confInitialDirectory.path) {
+          if (controller.directory.path != _initialDirectory.path) {
             _isBuilt = true;
             return Column(children: <Widget>[_topNavigation(), builder]);
           } else {
@@ -117,7 +124,6 @@ class _FilexState extends State<Filex> {
 
   Widget _buildCompactVerticalListItem(
       BuildContext context, DirectoryItem item) {
-    //print("ITEM ${item.filename} / ? isdir ${item.isDirectory}");
     return Padding(
         padding: const EdgeInsets.all(3.0),
         child: Row(children: <Widget>[
@@ -143,9 +149,18 @@ class _FilexState extends State<Filex> {
 
   Widget _buildLeading(BuildContext context, DirectoryItem item) {
     Widget w = item.icon;
-    switch (directoryLeadingBuilder != null) {
-      case true:
-        if (item.isDirectory) w = directoryLeadingBuilder(context, item);
+    if (item.isDirectory) {
+      switch (directoryLeadingBuilder != null) {
+        case true:
+          w = directoryLeadingBuilder(context, item);
+      }
+    } else {
+      switch (fileLeadingBuilder != null) {
+        case true:
+          w = fileLeadingBuilder(context, item);
+          break;
+        default:
+      }
     }
     return w;
   }
@@ -239,6 +254,7 @@ class Filex extends StatefulWidget {
   Filex(
       {@required this.controller,
       this.showHiddenFiles = false,
+      this.showOnlyDirectories = false,
       this.fileTrailingBuilder,
       this.directoryTrailingBuilder,
       this.directoryLeadingBuilder,
@@ -254,6 +270,9 @@ class Filex extends StatefulWidget {
 
   /// Show the hidden files
   final bool showHiddenFiles;
+
+  /// Show only the directories
+  final bool showOnlyDirectories;
 
   /// Trailing builder for files
   final FilexActionBuilder fileTrailingBuilder;
@@ -274,6 +293,7 @@ class Filex extends StatefulWidget {
   _FilexState createState() => _FilexState(
       controller: controller,
       showHiddenFiles: showHiddenFiles,
+      showOnlyDirectories: showOnlyDirectories,
       fileTrailingBuilder: fileTrailingBuilder,
       directoryTrailingBuilder: directoryTrailingBuilder,
       directoryLeadingBuilder: directoryLeadingBuilder,

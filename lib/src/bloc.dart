@@ -4,30 +4,30 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "models/filesystem.dart";
 import "commands.dart";
-import 'conf.dart';
 
 /// The main controller
 class FilexController {
   /// Provide a path
-  FilexController({@required this.path, this.showHiddenFiles = false}) {
+  FilexController({@required this.path}) {
     _bloc = _FilexBloc(path: path);
     directory = Directory(path);
-    confShowHiddenFiles = showHiddenFiles;
     assert(
         directory.existsSync(), "Directory ${directory.path} does not exist");
-    confInitialDirectory = directory;
   }
 
   /// Current directory
   Directory directory;
 
-  /// Config: show hidden files in listing
-  final bool showHiddenFiles;
-
   /// The current path to use
   final String path;
 
   _FilexBloc _bloc;
+
+  /// Setter for show only dirs setting
+  set showOnlyDirectories(bool v) => _bloc.showOnlyDirectories = v;
+
+  /// Setter for show hidden files setting
+  set showHiddenFiles(bool v) => _bloc.showHiddenFiles = v;
 
   /// Stream of directory items
   Stream<List<DirectoryItem>> get changefeed => _bloc.itemController.stream;
@@ -91,6 +91,8 @@ class _FilexBloc {
 
   final String path;
   final itemController = StreamController<List<DirectoryItem>>();
+  bool showOnlyDirectories;
+  bool showHiddenFiles;
 
   Future<void> deleteItem(DirectoryItem item) async {
     try {
@@ -115,7 +117,12 @@ class _FilexBloc {
 
   Future<void> lsDir(Directory dir) async {
     try {
-      ListedDirectory _d = getListedDirectory(dir, false);
+      ListedDirectory _d = getListedDirectory(dir,
+          showHiddenFiles: showHiddenFiles,
+          showOnlyDirectories: showOnlyDirectories);
+      if (showOnlyDirectories) {
+        itemController.sink.add(_d.items);
+      }
       itemController.sink.add(_d.items);
     } catch (e) {
       print("Can not ls dir: $e.message");
