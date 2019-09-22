@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:rxdart/rxdart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import "models/filesystem.dart";
@@ -9,7 +10,7 @@ import "commands.dart";
 class FilexController {
   /// Provide a path
   FilexController({@required this.path}) {
-    _bloc = _FilexBloc(path: path);
+    _bloc = _FilexBloc(path: path, itemController: _itemStream);
     directory = Directory(path);
     assert(
         directory.existsSync(), "Directory ${directory.path} does not exist");
@@ -22,6 +23,7 @@ class FilexController {
   final String path;
 
   _FilexBloc _bloc;
+  final _itemStream = ReplaySubject<List<DirectoryItem>>();
 
   /// Setter for show only dirs setting
   set showOnlyDirectories(bool v) => _bloc.showOnlyDirectories = v;
@@ -30,8 +32,7 @@ class FilexController {
   set showHiddenFiles(bool v) => _bloc.showHiddenFiles = v;
 
   /// Stream of directory items
-  Stream<List<DirectoryItem>> get changefeed =>
-      _bloc.itemController.stream.asBroadcastStream();
+  Stream<List<DirectoryItem>> get changefeed => _itemStream.stream;
 
   /// Delete a file or directory
   Future<void> delete(DirectoryItem item) async => _bloc.deleteItem(item);
@@ -45,7 +46,7 @@ class FilexController {
 
   /// Dispose the controller when finished using
   void dispose() {
-    _bloc.dispose();
+    _itemStream.close();
   }
 
   /// Create a directory
@@ -88,10 +89,10 @@ class FilexController {
 }
 
 class _FilexBloc {
-  _FilexBloc({@required this.path});
+  _FilexBloc({@required this.path, @required this.itemController});
 
   final String path;
-  final itemController = StreamController<List<DirectoryItem>>();
+  final StreamController<List<DirectoryItem>> itemController;
   bool showOnlyDirectories;
   bool showHiddenFiles;
 
@@ -128,9 +129,5 @@ class _FilexBloc {
     } catch (e) {
       print("Can not ls dir: $e.message");
     }
-  }
-
-  void dispose() {
-    itemController.close();
   }
 }
