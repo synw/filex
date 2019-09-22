@@ -30,7 +30,8 @@ class FilexController {
   set showHiddenFiles(bool v) => _bloc.showHiddenFiles = v;
 
   /// Stream of directory items
-  Stream<List<DirectoryItem>> get changefeed => _bloc.itemController.stream;
+  Stream<List<DirectoryItem>> get changefeed =>
+      _bloc.itemController.stream.asBroadcastStream();
 
   /// Delete a file or directory
   Future<void> delete(DirectoryItem item) async => _bloc.deleteItem(item);
@@ -90,7 +91,7 @@ class _FilexBloc {
   _FilexBloc({@required this.path});
 
   final String path;
-  final itemController = StreamController<List<DirectoryItem>>.broadcast();
+  final itemController = StreamController<List<DirectoryItem>>();
   bool showOnlyDirectories;
   bool showHiddenFiles;
 
