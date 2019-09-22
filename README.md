@@ -99,3 +99,15 @@ void customAction(BuildContext context, DirectoryItem item) {
     // action here
 }
 ```
+
+## Changefeed
+
+A stream with directory listing items is available to implement
+on change callbacks:
+
+```dart
+StreamSubscription<List<DirectoryItem>> _sub;
+_sub = controller.changefeed.listen((items) {
+  // do something
+});
+```
