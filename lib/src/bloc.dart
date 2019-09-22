@@ -90,7 +90,7 @@ class _FilexBloc {
   _FilexBloc({@required this.path});
 
   final String path;
-  final itemController = StreamController<List<DirectoryItem>>();
+  final itemController = StreamController<List<DirectoryItem>>.broadcast();
   bool showOnlyDirectories;
   bool showHiddenFiles;
 
