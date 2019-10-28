@@ -1,4 +1,4 @@
-# example
+# filex_example
 
 A new Flutter project.
 
