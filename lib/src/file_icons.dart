@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 /// Set the icon for a file
 Icon setFileIcon(String filename) {
-  String extension = filename.split(".").last;
-  if (extension == "db" || extension == "sqlite" || extension == "sqlite3") {
+  final _extension = filename.split(".").last;
+  if (_extension == "db" || _extension == "sqlite" || _extension == "sqlite3") {
     return const Icon(Icons.dns);
-  } else if (extension == "jpg" || extension == "jpeg" || extension == "png") {
+  } else if (_extension == "jpg" ||
+      _extension == "jpeg" ||
+      _extension == "png") {
     return const Icon(Icons.image);
   }
   // default

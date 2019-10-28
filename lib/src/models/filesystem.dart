@@ -30,15 +30,15 @@ class ListedDirectory {
   List<DirectoryItem> get items => _items;
 
   void _getItems() {
-    var _d = <DirectoryItem>[];
-    for (var _item in listedDirectories) {
+    final _d = <DirectoryItem>[];
+    for (final _item in listedDirectories) {
       _d.add(DirectoryItem(item: _item));
     }
-    var _f = <DirectoryItem>[];
-    for (var _item in listedFiles) {
+    final _f = <DirectoryItem>[];
+    for (final _item in listedFiles) {
       _f.add(DirectoryItem(item: _item));
     }
-    _items = new List.from(_d)..addAll(_f);
+    _items = List.from(_d)..addAll(_f);
   }
 }
 
@@ -81,7 +81,7 @@ class DirectoryItem {
 
   String _getFilesize(FileSystemEntity _item, {bool raw = false}) {
     if (_item is File) {
-      int s = _item.lengthSync();
+      final s = _item.lengthSync();
       String size;
       if (raw == false) {
         size = fs.filesize(s);

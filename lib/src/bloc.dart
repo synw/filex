@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:rxdart/rxdart.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import "models/filesystem.dart";
+import 'package:rxdart/rxdart.dart';
+
 import "commands.dart";
+import "models/filesystem.dart";
 
 /// The main controller
 class FilexController {
@@ -107,10 +109,8 @@ class _FilexBloc {
 
   Future<void> createDir(Directory dir, String name) async {
     try {
-      // trim the filename for leading and trailing spaces
-      name = name.trim();
       // create the directory
-      await mkdir(dir, name);
+      await mkdir(dir, name.trim());
       await lsDir(dir);
     } catch (e) {
       print("Can not create directory: $e.message");
@@ -119,7 +119,7 @@ class _FilexBloc {
 
   Future<void> lsDir(Directory dir) async {
     try {
-      ListedDirectory _d = getListedDirectory(dir,
+      final _d = getListedDirectory(dir,
           showHiddenFiles: showHiddenFiles,
           showOnlyDirectories: showOnlyDirectories);
       if (showOnlyDirectories) {

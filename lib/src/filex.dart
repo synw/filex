@@ -1,11 +1,13 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:open_file/open_file.dart';
-import "models/filesystem.dart";
+import 'package:pedantic/pedantic.dart';
+
 import 'bloc.dart';
 import 'models/actions.dart';
+import "models/filesystem.dart";
 
 class _FilexState extends State<Filex> {
   _FilexState(
@@ -20,9 +22,10 @@ class _FilexState extends State<Filex> {
       this.actions,
       this.extraActions}) {
     _initialDirectory = controller.directory;
-    controller.showOnlyDirectories = showOnlyDirectories;
-    controller.showHiddenFiles = showHiddenFiles;
-    controller.ls();
+    controller
+      ..showOnlyDirectories = showOnlyDirectories
+      ..showHiddenFiles = showHiddenFiles
+      ..ls();
   }
 
   final bool showHiddenFiles;
@@ -51,12 +54,12 @@ class _FilexState extends State<Filex> {
           if (_isBuilt) {
             _scrollTop();
           }
-          ListView builder = ListView.builder(
+          final builder = ListView.builder(
               controller: _scrollController,
               shrinkWrap: true,
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
-                DirectoryItem item = snapshot.data[index];
+                final item = snapshot.data[index];
                 Widget w;
                 if (actions.isNotEmpty) {
                   w = Slidable(
@@ -65,7 +68,7 @@ class _FilexState extends State<Filex> {
                     direction: Axis.horizontal,
                     actionPane: const SlidableDrawerActionPane(),
                     actionExtentRatio: 0.25,
-                    child: (compact)
+                    child: compact
                         ? _buildCompactVerticalListItem(context, item)
                         : _buildVerticalListItem(context, item),
                     actions: _getSlideIconActions(context, item),
@@ -99,13 +102,12 @@ class _FilexState extends State<Filex> {
 
   GestureDetector _topNavigation() {
     return GestureDetector(
-      child: ListTile(
-        leading: const Icon(Icons.arrow_upward),
-        title: const Text("..", textScaleFactor: 1.5),
+      child: const ListTile(
+        leading: Icon(Icons.arrow_upward),
+        title: Text("..", textScaleFactor: 1.5),
       ),
       onTap: () {
-        var li = controller.directory.path.split("/");
-        li.removeLast();
+        final li = controller.directory.path.split("/")..removeLast();
         controller.directory = Directory(li.join("/"));
         unawaited(controller.ls());
       },
@@ -139,9 +141,10 @@ class _FilexState extends State<Filex> {
 
   void _onTapDirectory(DirectoryItem item) {
     if (item.isDirectory) {
-      String p = controller.directory.path + "/" + item.filename;
-      controller.directory = Directory(p);
-      controller.ls();
+      final p = controller.directory.path + "/" + item.filename;
+      controller
+        ..directory = Directory(p)
+        ..ls();
     } else {
       if (Platform.isIOS || Platform.isAndroid) OpenFile.open(item.path);
     }
@@ -186,7 +189,7 @@ class _FilexState extends State<Filex> {
   }
 
   List<Widget> _getSlideIconActions(BuildContext context, DirectoryItem item) {
-    List<Widget> ic = [];
+    final ic = <Widget>[];
     if (actions.contains(PredefinedAction.delete)) {
       ic.add(IconSlideAction(
         caption: 'Delete',
@@ -251,7 +254,7 @@ class _FilexState extends State<Filex> {
 /// The file explorer
 class Filex extends StatefulWidget {
   /// Provide a directory to start from
-  Filex(
+  const Filex(
       {@required this.controller,
       this.showHiddenFiles = false,
       this.showOnlyDirectories = false,
