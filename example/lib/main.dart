@@ -18,8 +18,7 @@ class _FileExplorerState extends State<FileExplorer> {
     final dir = await getExternalStorageDirectory();
     switch (Platform.isAndroid) {
       case true:
-        _dirPath = dir.path
-            .replaceFirst("Android/data/com.example.filex_example/files", "");
+        _dirPath = dir.path.replaceFirst("Android/data/com.example.filex_example/files", "");
         break;
       default:
         _dirPath = dir.path;
@@ -33,11 +32,10 @@ class _FileExplorerState extends State<FileExplorer> {
   void initState() {
     getDir();
     super.initState();
-    Permission.requestPermissions([PermissionName.Storage])
-        .then((_) => _onReady.future.then((_) {
-              controller = FilexController(path: _dirPath);
-              setState(() => _ready = true);
-            }));
+    Permission.requestPermissions([PermissionName.Storage]).then((_) => _onReady.future.then((_) {
+          controller = FilexController(path: _dirPath);
+          setState(() => _ready = true);
+        }));
   }
 
   @override
@@ -54,6 +52,8 @@ class _FileExplorerState extends State<FileExplorer> {
       ),
       body: _ready
           ? Filex(
+              showTopNavigation: true,
+              lastParentDirectory: controller.directory,
               controller: controller,
               actions: <PredefinedAction>[PredefinedAction.delete],
             )

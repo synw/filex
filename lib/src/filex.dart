@@ -14,6 +14,8 @@ class _FilexState extends State<Filex> {
       {@required this.controller,
       this.showHiddenFiles,
       this.showOnlyDirectories,
+      this.showTopNavigation = true,
+      this.lastParentDirectory,
       this.fileTrailingBuilder,
       this.directoryTrailingBuilder,
       this.fileLeadingBuilder,
@@ -30,6 +32,8 @@ class _FilexState extends State<Filex> {
 
   final bool showHiddenFiles;
   final bool showOnlyDirectories;
+  final bool showTopNavigation;
+  final Directory lastParentDirectory;
   final FilexActionBuilder fileLeadingBuilder;
   final FilexActionBuilder fileTrailingBuilder;
   final FilexActionBuilder directoryTrailingBuilder;
@@ -48,8 +52,7 @@ class _FilexState extends State<Filex> {
   Widget build(BuildContext context) {
     return StreamBuilder<List<DirectoryItem>>(
       stream: controller.changefeed,
-      builder:
-          (BuildContext context, AsyncSnapshot<List<DirectoryItem>> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<DirectoryItem>> snapshot) {
         if (snapshot.hasData) {
           if (_isBuilt) {
             _scrollTop();
@@ -68,9 +71,7 @@ class _FilexState extends State<Filex> {
                     direction: Axis.horizontal,
                     actionPane: const SlidableDrawerActionPane(),
                     actionExtentRatio: 0.25,
-                    child: compact
-                        ? _buildCompactVerticalListItem(context, item)
-                        : _buildVerticalListItem(context, item),
+                    child: compact ? _buildCompactVerticalListItem(context, item) : _buildVerticalListItem(context, item),
                     actions: _getSlideIconActions(context, item),
                   );
                 } else {
@@ -82,7 +83,7 @@ class _FilexState extends State<Filex> {
                 }
                 return w;
               });
-          if (controller.directory.path != _initialDirectory.path) {
+          if (showTopNavigation && (controller.directory.path != lastParentDirectory?.path)) {
             _isBuilt = true;
             return Column(children: <Widget>[_topNavigation(), builder]);
           } else {
@@ -90,11 +91,7 @@ class _FilexState extends State<Filex> {
             return builder;
           }
         } else {
-          return Center(
-              child: Padding(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height / 0.8),
-                  child: const CircularProgressIndicator()));
+          return Center(child: Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 0.8), child: const CircularProgressIndicator()));
         }
       },
     );
@@ -124,8 +121,7 @@ class _FilexState extends State<Filex> {
     );
   }
 
-  Widget _buildCompactVerticalListItem(
-      BuildContext context, DirectoryItem item) {
+  Widget _buildCompactVerticalListItem(BuildContext context, DirectoryItem item) {
     return Padding(
         padding: const EdgeInsets.all(3.0),
         child: Row(children: <Widget>[
@@ -240,8 +236,7 @@ class _FilexState extends State<Filex> {
   }
 
   void _scrollTop() {
-    _scrollController.animateTo(_scrollController.position.minScrollExtent,
-        duration: Duration(milliseconds: 10), curve: Curves.easeIn);
+    _scrollController.animateTo(_scrollController.position.minScrollExtent, duration: Duration(milliseconds: 10), curve: Curves.easeIn);
   }
 
   @override
@@ -258,6 +253,8 @@ class Filex extends StatefulWidget {
       {@required this.controller,
       this.showHiddenFiles = false,
       this.showOnlyDirectories = false,
+      this.showTopNavigation = true,
+      this.lastParentDirectory,
       this.fileTrailingBuilder,
       this.directoryTrailingBuilder,
       this.directoryLeadingBuilder,
@@ -276,6 +273,12 @@ class Filex extends StatefulWidget {
 
   /// Show only the directories
   final bool showOnlyDirectories;
+
+  // Show the top navigation to go back
+  final bool showTopNavigation;
+
+  // Last directory, for which top navigation will be disabled
+  final Directory lastParentDirectory;
 
   /// Trailing builder for files
   final FilexActionBuilder fileTrailingBuilder;
@@ -297,6 +300,8 @@ class Filex extends StatefulWidget {
       controller: controller,
       showHiddenFiles: showHiddenFiles,
       showOnlyDirectories: showOnlyDirectories,
+      showTopNavigation: showTopNavigation,
+      lastParentDirectory: lastParentDirectory,
       fileTrailingBuilder: fileTrailingBuilder,
       directoryTrailingBuilder: directoryTrailingBuilder,
       directoryLeadingBuilder: directoryLeadingBuilder,
