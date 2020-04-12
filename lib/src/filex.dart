@@ -84,7 +84,12 @@ class _FilexState extends State<Filex> {
               });
           if (controller.directory.path != _initialDirectory.path) {
             _isBuilt = true;
-            return Column(children: <Widget>[_topNavigation(), builder]);
+            return Column(
+                children: <Widget>[
+                  _topNavigation(),
+                  Expanded(child: builder)
+                ]
+            );
           } else {
             _isBuilt = true;
             return builder;
