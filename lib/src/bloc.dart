@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:rxdart/rxdart.dart' as rx;
 
 import "commands.dart";
 import "models/filesystem.dart";
@@ -25,7 +25,7 @@ class FilexController {
   final String path;
 
   _FilexBloc _bloc;
-  final _itemStream = ReplaySubject<List<DirectoryItem>>();
+  final _itemStream = rx.ReplaySubject<List<DirectoryItem>>();
 
   /// Setter for show only dirs setting
   set showOnlyDirectories(bool v) => _bloc.showOnlyDirectories = v;

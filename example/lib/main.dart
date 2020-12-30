@@ -47,7 +47,7 @@ class _FileExplorerState extends State<FileExplorer> {
         title: const Text("Files"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () => controller.addDirectory(context),
           )
         ],

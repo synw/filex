@@ -246,7 +246,7 @@ class _FilexState extends State<Filex> {
 
   void _scrollTop() {
     _scrollController.animateTo(_scrollController.position.minScrollExtent,
-        duration: Duration(milliseconds: 10), curve: Curves.easeIn);
+        duration: const Duration(milliseconds: 10), curve: Curves.easeIn);
   }
 
   @override

@@ -9,6 +9,8 @@ Icon setFileIcon(String filename) {
       _extension == "jpeg" ||
       _extension == "png") {
     return const Icon(Icons.image);
+  } else if(_extension == "pdf"){
+    return const Icon(Icons.picture_as_pdf);
   }
   // default
   return const Icon(Icons.description, color: Colors.grey);
