@@ -14,7 +14,6 @@ class _FileExplorerState extends State<FileExplorer> {
   final _onReady = Completer<void>();
 
   Future<void> getDir() async {
-    //dir = await getApplicationDocumentsDirectory();
     final dir = await getExternalStorageDirectory();
     switch (Platform.isAndroid) {
       case true:
