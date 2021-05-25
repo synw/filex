@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 
@@ -11,27 +9,27 @@ import "models/filesystem.dart";
 /// The main controller
 class FilexController {
   /// Provide a path
-  FilexController({@required this.path}) {
+  FilexController({required this.path}) {
     _bloc = _FilexBloc(path: path, itemController: _itemStream);
     directory = Directory(path);
     assert(
-        directory.existsSync(), "Directory ${directory.path} does not exist");
+        directory!.existsSync(), "Directory ${directory!.path} does not exist");
   }
 
   /// Current directory
-  Directory directory;
+  Directory? directory;
 
   /// The current path to use
   final String path;
 
-  _FilexBloc _bloc;
+  late _FilexBloc _bloc;
   final _itemStream = rx.ReplaySubject<List<DirectoryItem>>();
 
   /// Setter for show only dirs setting
-  set showOnlyDirectories(bool v) => _bloc.showOnlyDirectories = v;
+  set showOnlyDirectories(bool? v) => _bloc.showOnlyDirectories = v;
 
   /// Setter for show hidden files setting
-  set showHiddenFiles(bool v) => _bloc.showHiddenFiles = v;
+  set showHiddenFiles(bool? v) => _bloc.showHiddenFiles = v;
 
   /// Stream of directory items
   Stream<List<DirectoryItem>> get changefeed => _itemStream.stream;
@@ -41,10 +39,10 @@ class FilexController {
 
   /// Create a directory
   Future<void> createDirectory(String name) async =>
-      _bloc.createDir(directory, name);
+      _bloc.createDir(directory!, name);
 
   /// List a directory content
-  Future<void> ls() async => _bloc.lsDir(directory);
+  Future<void> ls() async => _bloc.lsDir(directory!);
 
   /// Dispose the controller when finished using
   void dispose() {
@@ -60,13 +58,13 @@ class FilexController {
         return AlertDialog(
             title: const Text("Create a directory"),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: const Text("Cancel"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: const Text("Create"),
                 onPressed: () {
                   createDirectory(_addDirController.text);
@@ -91,12 +89,12 @@ class FilexController {
 }
 
 class _FilexBloc {
-  _FilexBloc({@required this.path, @required this.itemController});
+  _FilexBloc({required this.path, required this.itemController});
 
   final String path;
-  final StreamController<List<DirectoryItem>> itemController;
-  bool showOnlyDirectories;
-  bool showHiddenFiles;
+  final StreamController<List<DirectoryItem>?> itemController;
+  bool? showOnlyDirectories;
+  bool? showHiddenFiles;
 
   Future<void> deleteItem(DirectoryItem item) async {
     try {
@@ -122,7 +120,7 @@ class _FilexBloc {
       final _d = getListedDirectory(dir,
           showHiddenFiles: showHiddenFiles,
           showOnlyDirectories: showOnlyDirectories);
-      if (showOnlyDirectories) {
+      if (showOnlyDirectories!) {
         itemController.sink.add(_d.items);
       }
       itemController.sink.add(_d.items);

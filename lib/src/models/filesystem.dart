@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:filesize/filesize.dart' as fs;
 import '../file_icons.dart';
 
@@ -9,9 +8,9 @@ import '../file_icons.dart';
 class ListedDirectory {
   /// Default constructor
   ListedDirectory(
-      {@required this.directory,
-      @required this.listedDirectories,
-      @required this.listedFiles}) {
+      {required this.directory,
+      required this.listedDirectories,
+      required this.listedFiles}) {
     _getItems();
   }
 
@@ -24,10 +23,10 @@ class ListedDirectory {
   /// The files in the directory
   final List<File> listedFiles;
 
-  List<DirectoryItem> _items;
+  List<DirectoryItem>? _items;
 
   /// All the directory items
-  List<DirectoryItem> get items => _items;
+  List<DirectoryItem>? get items => _items;
 
   void _getItems() {
     final _d = <DirectoryItem>[];
@@ -45,7 +44,7 @@ class ListedDirectory {
 /// A subdirectory item: file or directory
 class DirectoryItem {
   /// Default constructor
-  DirectoryItem({@required this.item}) {
+  DirectoryItem({required this.item}) {
     _filesize = _getFilesize(item);
     _filename = basename(item.path);
     _icon = _setIcon(item, _filename);
@@ -54,12 +53,12 @@ class DirectoryItem {
   /// The subdirectory or file
   final FileSystemEntity item;
 
-  String _filename;
-  Icon _icon;
+  String? _filename;
+  Icon? _icon;
   String _filesize = "";
 
   /// The icon too display
-  Icon get icon => _icon;
+  Icon? get icon => _icon;
 
   /// The humanized size of the file
   String get filesize => _filesize;
@@ -68,7 +67,7 @@ class DirectoryItem {
   String get rawFilesize => _getFilesize(item, raw: true);
 
   /// The name of the file or directory
-  String get filename => _filename;
+  String? get filename => _filename;
 
   /// Is the item a directory
   bool get isDirectory => item is Directory;
@@ -94,10 +93,10 @@ class DirectoryItem {
     }
   }
 
-  Icon _setIcon(dynamic _item, String _filename) {
+  Icon _setIcon(dynamic _item, String? _filename) {
     if (_item is Directory) {
       return const Icon(Icons.folder, color: Colors.yellow);
     }
-    return setFileIcon(_filename);
+    return setFileIcon(_filename!);
   }
 }

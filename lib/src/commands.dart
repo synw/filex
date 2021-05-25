@@ -29,13 +29,13 @@ Future<void> mkdir(Directory currentDir, String name) async {
 
 /// List items in directory
 ListedDirectory getListedDirectory(Directory dir,
-    {bool showHiddenFiles, bool showOnlyDirectories}) {
+    {bool? showHiddenFiles, bool? showOnlyDirectories}) {
   //print("LIST DIR ${dir.path}");
   final contents = dir.listSync()..sort((a, b) => a.path.compareTo(b.path));
   final dirs = <Directory>[];
   final files = <File>[];
   for (final fileOrDir in contents) {
-    if (!showHiddenFiles) {
+    if (!showHiddenFiles!) {
       if (basename(fileOrDir.path).startsWith(".")) continue;
     }
     switch (fileOrDir is Directory) {
@@ -44,7 +44,7 @@ ListedDirectory getListedDirectory(Directory dir,
         dirs.add(dir);
         break;
       default:
-        if (!showOnlyDirectories) {
+        if (!showOnlyDirectories!) {
           final file = File(fileOrDir.path);
           files.add(file);
         }
