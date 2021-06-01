@@ -29,7 +29,7 @@ Future<void> mkdir(Directory currentDir, String name) async {
 
 /// List items in directory
 ListedDirectory getListedDirectory(Directory dir,
-    {bool showHiddenFiles, bool showOnlyDirectories}) {
+    {bool showHiddenFiles = false, bool showOnlyDirectories = false}) {
   //print("LIST DIR ${dir.path}");
   final contents = dir.listSync()..sort((a, b) => a.path.compareTo(b.path));
   final dirs = <Directory>[];
